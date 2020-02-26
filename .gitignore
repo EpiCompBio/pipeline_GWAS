@@ -1,0 +1,42 @@
+# Mac OS X and others:
+*.tar
+*.gz
+.dir_bash_history
+*.dir_bash_history
+*.DS_Store
+.ipynb_checkpoints
+
+# Vim:
+*~
+*.swp
+
+# Compiled python modules:
+*.pyc
+
+# Python packaging, setuptools, eggs, etc.:
+MANIFEST
+PKG-INFO
+*.egg-info
+__pycache__
+*.egg
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Sphinx:
+docs/_build
+docs/_static
+docs/_templates
+docs/*pdf
+docs/*html
+
+# flake8:
+.cache/

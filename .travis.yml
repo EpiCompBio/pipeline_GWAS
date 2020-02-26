@@ -1,0 +1,59 @@
+################
+# See:
+# https://docs.travis-ci.com/user/getting-started/
+################
+
+################
+# Use container-based infrastructure on Travis:
+sudo: false
+################
+
+################
+# https://docs.travis-ci.com/user/multi-os/
+os:
+#  - osx # needs more work, maybe download miniconda first
+  - linux
+################
+
+################
+# Specify runtime and versions
+# See: https://docs.travis-ci.com/user/customizing-the-build/#Specifying-Runtime-Versions
+language: python
+python:
+  - "3.5"
+  - "3.6"
+#  - "3.7"
+################
+
+################
+# Install dependencies:
+before_install:
+#  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
+#  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew upgrade python; fi
+
+install:
+  - pip install -r requirements.txt # --use-mirrors errors in Py3.5
+  - python setup.py install
+  - pip install flake8
+#  - pip install coverage # coveralls.io continuously monitors test case coverage
+#  - pip install coveralls
+################
+
+################
+# Indicate what to do before script, what script to execute and what to do after this:
+# flake8 is wrapper for pep8, pyflakes and McCabe. 
+# pep8 checks the PEP 0008 style
+# pyflakes looks for e.g. unused imports or variables
+# McCabe warns about (unnecessary) complicated code
+
+before_script:
+    - flake8 .
+
+# command to run tests
+script: 
+  - pytest -rP -v --cache-clear
+#  - coverage run --source=project_quickstart setup.py test
+
+#after_success:
+#    coveralls
+################

@@ -1,0 +1,105 @@
+######################################################
+# pipeline_template.py configuration file
+# Add pipeline specific options into separate sections
+######################################################
+
+################################################################
+# General options:
+# Many options are needed for a Python package software project.
+# Leave these blank if not needed
+# Deleting them will cause conf.py to error.
+
+metadata:
+    project_name:
+
+    author_name:
+
+    all_author_names:
+
+    date:
+
+    project_url:
+
+    download_url:
+
+    author_email:
+
+    license:
+
+    license_year:
+
+    version:
+
+    keywords:
+
+    short_description:
+
+# long_description can be read rom README.rst within setup.py but PyPI doesn't render it.
+    long_description:
+
+# The same version is used for pipelines, scripts and project:
+# This is easier to edit directly in the file version.py 
+
+    classifiers:
+
+    platforms: 'any'
+################################################################
+
+
+################################################################
+# Pipeline general options:
+general:
+# Specify the location of the scripts for this project. Needs to be set.
+    project_scripts_dir: ../code/pq_example
+
+# Specify the python executable, this is if running on a Mac and using matplotlib (which needs pythonw):
+    py_exec: pythonw
+#either "python" or "pythonw"
+
+# scratchdir for data not to be backed up
+    scratchdir:
+    #/tmp
+
+# a version string
+    version:
+
+# Pipeline database options:
+database:
+    url: sqlite:///./csvdb
+
+# Specific external tools to run in this pipeline (e.g. when more than one 
+# association tool, mapper, etc. are available in the pipeline)
+# Options for these can be specified below
+# tool1
+# tool2
+# etc
+    cmd_tools:
+
+################################################################
+
+################################################################
+# Pipeline specific options:
+pipeline_template:
+    parameter_x:
+
+    parameter_y:
+################################################################
+
+################################################################
+# Programme specific options (tools called from this pipeline)
+my_cmd_tool:
+# Write some helpful notes here and add parameters to be called
+# These need to be picked up by the pipeline itself
+    #options:
+    #threads: 12
+# e.g. memory required for xxx programme jobs:
+    # memory:
+
+# e.g. executable
+    executable:
+
+my_other_cmd_tool:
+# Write some helpful notes here and add parameters to be called
+# These need to be picked up by the pipeline itself
+    some_option:
+################################################################

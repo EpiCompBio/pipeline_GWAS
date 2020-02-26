@@ -1,0 +1,73 @@
+# By default, Distutils (the packaging framework, called in setup.py) will include the following files in your release package:
+#    README.txt
+#    setup.py
+#    The .py files needed by the multi-file modules listed in the packages parameter
+#    The individual .py files listed in the py_modules parameter 
+
+# MANIFEST.in commands:
+# https://docs.python.org/3/distutils/sourcedist.html#commands
+
+# See explanation in: http://www.diveintopython3.net/packaging.html
+# Use .add_data_files and .add_data_dir methods in appropriate
+# setup.py files to include non-python files such as documentation,
+# data, etc files to distribution. Avoid using MANIFEST.in for that.
+
+# Use check-manifest to detect errors in setup.py:
+# https://pypi.python.org/pypi/check-manifest
+
+# Except packaging in Python is a massive pain with incomplete and seemingly
+# contradicting docs.
+
+# Include main package and scripts:
+recursive-include project_name *.py
+
+# Include scripts in main directory, package info and INI files:
+include *.py
+include MANIFEST.in
+include *.ini
+include LICENSE
+include INSTALL
+include README.rst
+include THANKS.rst
+include TODO.rst
+include COPYING
+
+# Include dependency specifications and Docker:
+include external_dependencies.txt
+include requirements.txt
+include Dockerfile
+
+# Include project documentation:
+recursive-include docs *.html
+recursive-include docs *.rst
+recursive-include docs *.py
+include docs/Makefile
+include docs/make.bat
+prune docs/_build
+
+# Include files for tests:
+include tox.ini 
+include .travis.yml
+include run_travis_tests.sh
+recursive-include tests *
+include rsync.rst
+include substitution_vars.rst
+recursive-include pipeline* *.yml
+
+# Include addtional files needed, example data, etc.:
+#include data_examples *
+
+# Files to exclude:
+exclude .gitignore
+exclude .dir_bash_history
+exclude tests/.dir_bash_history
+exclude data_examples/.dir_bash_history
+
+# Extensions to include:
+#include *.pyxbld
+#include *.pyx
+#include *.h
+#include *.cpp
+#include *.h
+#include *.pxd
+#include *.c

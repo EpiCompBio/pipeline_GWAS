@@ -1,0 +1,11 @@
+
+Place all scripts that you want available from the command line in this directory.
+
+If you create subfolders, for each subfolder create an __init__.py file which contains:
+
+name = 'name_of_the_subfolder'
+
+setup.py will then pick up these scripts and place them in your PATH after pip install.
+
+setup.py automatically picks all *.R, *.py and *.sh files. If your scripts are named differently or from other languages simply add suffixes to the 'executables' variable.
+

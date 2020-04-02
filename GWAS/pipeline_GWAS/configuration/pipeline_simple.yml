@@ -1,0 +1,9 @@
+
+
+database:
+    name: "csvdb"
+
+gcta:
+    make-bK-sparse: 0.05
+    MLM_fastGWA_options: #e.g. --threads 10
+

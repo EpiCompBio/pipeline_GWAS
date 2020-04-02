@@ -249,34 +249,92 @@ def connect():
 # Specific pipeline tasks
 # Tools called need the full path or be directly callable
 
-@transform((INI_file, "conf.py"),
-           regex("(.*)\.(.*)"),
-           r"\1.counts")
-def countWords(infile, outfile):
-    '''count the number of words in the pipeline configuration files.'''
+#ukb_imp_chr22.bed #ukb_imp_chr22.bim and fam file (one for all UKB)
+#ukb_imp_chr22.bgen #ukb_imp_chr22.bgen.bgi and sample file (one for UKB)
 
-    # the command line statement we want to execute
-    statement = '''awk 'BEGIN { printf("word\\tfreq\\n"); }
-    {for (i = 1; i <= NF; i++) freq[$i]++}
-    END { for (word in freq) printf "%%s\\t%%d\\n", word, freq[word] }'
-    < %(infile)s > %(outfile)s'''
+@transform("*.bgen",
+           suffix(".bgen"),
+           ".geno_grm",
+           "*.sample")
+def getGRM(infile, outfile, sample_file):
+    ''' Generate a full GRM from SNP data '''
 
-    # execute command in variable statement.
-    #
-    # The command will be sent to the cluster.  The statement will be
-    # interpolated with any options that are defined in in the
-    # configuration files or variable that are declared in the calling
-    # function.  For example, %(infile)s will we substituted with the
-    # contents of the variable "infile".
+    #gcta64 --mbfile geno_chrs.txt --make-grm --thread-num 10 --out geno_grm
+    statement = '''gcta64 --bgen %(infile)s --sample %(sample_file)s --make-grm --out %(outfile)s'''
     P.run(statement)
 
 
-@transform(countWords,
-           suffix(".counts"),
-           "_counts.load")
-def loadWordCounts(infile, outfile):
-    '''load results of word counting into database.'''
-    P.load(infile, outfile, "--add-index=word")
+@transform("*.geno_grm",
+           suffix(".geno_grm"),
+           ".sp_grm")
+def sparseGRM(infile, outfile):
+    '''Generate a sparse GRM from SNP data'''
+
+    # gcta64 --grm geno_grm --make-bK-sparse 0.05 --out sp_grm
+    sparse_cut = PARAMS['gcta']['make-bK-sparse']
+    statement = ''' gcta64 --grm %(infile)s --make-bK-spare %(sparse_cut)s --out %(outfile)s'''
+    P.run(statement)
+
+
+@transform(".bgen",
+           suffix(".bgen"),
+           ".geno_assoc",
+           "*.sample",
+           "*.sp_grm",
+           "*.pheno"
+           "*.qcovar",
+           "*.cat_covar")
+def MLM_fastGWA(infile,
+                outfile,
+                sample_file,
+                sp_grm,
+                pheno_file,
+                qcovar_file,
+                cat_covar_file):
+    ''' fastGWA mixed model (based on the sparse GRM generated above) '''
+    # Add any options passed to the ini file:
+    MLM_fastGWA_options = PARAMS['gcta']['MLM_fastGWA_options']
+    if MLM_fastGWA_options == None:
+        MLM_fastGWA_options = ''
+    else:
+        pass
+    statement = '''gcta64 --mbfile %(infile)s
+                          --sample %(sample_file)s
+                          --grm-sparse %(sp_grm)s
+                          --fastGWA-mlm
+                          --pheno %(pheno_file)s
+                          --qcovar %(qcovar_file)s
+                          --covar %(cat_covar_file)s
+                          --out %(outfile)s
+                          %(MLM_fastGWA_options)s
+                '''
+    P.run(statement)
+
+
+# TO DO: continue here
+@transform()
+def lin_reg_fastGWA():
+    ''' fastGWA linear regression '''
+
+    #gcta64 --mbfile geno_chrs.txt --fastGWA-lr --pheno phenotype.txt --qcovar pc.txt --covar fixed.txt --threads 10 --out geno_assoc
+
+    statement = '''gcta --mbfile geno_chrs.txt
+                        --fastGWA-lr
+                        --pheno phenotype.txt
+                        --qcovar pc.txt
+                        --covar fixed.txt
+                        --threads 10
+                        --out geno_assoc
+                '''
+    P.run(statement)
+
+# Load onto database example:
+#@transform(countWords,
+#           suffix(".counts"),
+#           "_counts.load")
+#def loadWordCounts(infile, outfile):
+#    '''load results of word counting into database.'''
+#    P.load(infile, outfile, "--add-index=word")
 ################
 
 ################
